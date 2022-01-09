@@ -1128,6 +1128,7 @@ MonoBehaviour:
   mobileInput_Joysticks: {fileID: 2103127818}
   mainCamera: {fileID: 393721843}
   enemiesHolderUtil: {fileID: 1490033527}
+  gameManager: {fileID: 1907528550}
   InputServiceMobilePrefab: {fileID: 1975268572064841667, guid: 8d2cf232af4cf0f4084d70cbb91181f3, type: 3}
   InputServiceDesktopPrefab: {fileID: 5320861353168593097, guid: fa6b75777caef1a49bd836f2ab6f45c4, type: 3}
   PlayerPrefab: {fileID: 7275762688309431824, guid: 6e881fd6a1fff2a4dace3fec3368ddd7, type: 3}

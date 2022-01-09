@@ -12,7 +12,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private float enemyHp;
     [SerializeField] private Vector2 spawnInterval;
     [SerializeField] private int maxEnemiesOnMap;
-    [SerializeField] private Vector2 mapBorders = new Vector2(18.5f, 18.0f);
+    public Vector2 mapBorders = new Vector2(18.5f, 18.0f);
 
     [Header("Too Many Enemies")]
     [SerializeField] private Vector2 spawnInterval_Increased;
@@ -27,6 +27,8 @@ public class GameManager : MonoBehaviour
     private List<Entity> enemies;
 
     private List<IDisposable> LifetimeDisposables;
+
+    public Func<Entity, Vector2, Entity> SpawnEnemyCommand;
 
     [Inject]
     public void Construct(EnemiesHolderUtil enemiesHolderUtil)
@@ -87,9 +89,13 @@ public class GameManager : MonoBehaviour
             enemiesPrefabs[UnityEngine.Random.Range(0, enemiesPrefabs.Count)] :
             enemiesPrefabs[0];
 
-        var enemy = Instantiate(selectedPrefab, GetRandomSpawnPosition(), Quaternion.identity);
-        enemies.Add(enemy);
-        enemy.EntityKilled.Subscribe(_ => OnEntityDead(_)).AddTo(LifetimeDisposables);
+        var enemy = SpawnEnemyCommand?.Invoke(selectedPrefab, GetRandomSpawnPosition());
+
+        if(enemy != null)
+        {
+            enemies.Add(enemy);
+            enemy.EntityKilled.Subscribe(_ => OnEntityDead(_)).AddTo(LifetimeDisposables);
+        }
     }
 
     void OnEntityDead(Entity entity) => enemies.Remove(entity);

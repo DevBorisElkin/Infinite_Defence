@@ -11,6 +11,7 @@ public class GameProdInstaller : MonoInstaller
     public GameObject mobileInput_Joysticks;
     public CinemachineVirtualCamera mainCamera;
     public EnemiesHolderUtil enemiesHolderUtil;
+    public GameManager gameManager;
 
     [Header("Prefabs")]
     public InputService_Mobile InputServiceMobilePrefab;
@@ -20,10 +21,21 @@ public class GameProdInstaller : MonoInstaller
 
     public override void InstallBindings()
     {
+        BindGameManager();
         BindEnemiesPrefabs();
         BindBullet();
         BindInputService();
         BindPlayer();
+    }
+
+    void BindGameManager()
+    {
+        Container.Bind<GameManager>()
+            .FromInstance(gameManager)
+            .AsSingle()
+            .NonLazy();
+
+        gameManager.SpawnEnemyCommand += SpawnEnemy;
     }
 
     void BindEnemiesPrefabs()
@@ -61,10 +73,27 @@ public class GameProdInstaller : MonoInstaller
     }
     void BindPlayer()
     {
-        var heroController = Container
+        var player = Container
             .InstantiatePrefabForComponent<Player>(PlayerPrefab, PlayerInitialPos.position, Quaternion.identity, null);
 
-        mainCamera.Follow = heroController.transform;
-        mainCamera.LookAt = heroController.transform;
+        Container.Bind<Player>()
+        .FromInstance(player)
+        .AsSingle()
+        .NonLazy();
+
+        mainCamera.Follow = player.transform;
+        mainCamera.LookAt = player.transform;
+    }
+
+    public Entity SpawnEnemy(Entity selectedPrefab, Vector2 spawnPos)
+    {
+        var enemy = Container
+            .InstantiatePrefabForComponent<Entity>(selectedPrefab, spawnPos, Quaternion.identity, null);
+        return enemy;
+    }
+
+    private void OnDestroy()
+    {
+        gameManager.SpawnEnemyCommand -= SpawnEnemy;
     }
 }

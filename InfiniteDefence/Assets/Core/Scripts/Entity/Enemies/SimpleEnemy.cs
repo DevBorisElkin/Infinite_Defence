@@ -2,14 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SimpleEnemy : Entity
+public class SimpleEnemy : Enemy
 {
-    public override void PerformMovement() 
-    {
     
-    }
-    public override void PerformRotation() 
-    {
-    
-    }
 }

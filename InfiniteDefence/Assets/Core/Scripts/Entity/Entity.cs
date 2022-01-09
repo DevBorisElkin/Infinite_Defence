@@ -22,7 +22,7 @@ public class Entity : MonoBehaviour
 
     protected List<IDisposable> LifetimeDisposables;
 
-    protected Rigidbody2D rb;
+    [SerializeField] protected Rigidbody2D rb;
 
     public virtual void Awake()
     {
