@@ -6,31 +6,40 @@ using Zenject;
 
 public class GameProdInstaller : MonoInstaller
 {
+    [Header("Scene Components")]
     public Transform PlayerInitialPos;
-    public Player PlayerPrefab;
-    public InputService_Mobile InputServiceMobilePrefab;
-    public InputService_Desktop InputServiceDesktopPrefab;
     public GameObject mobileInput_Joysticks;
     public CinemachineVirtualCamera mainCamera;
+    public EnemiesHolderUtil enemiesHolderUtil;
 
+    [Header("Prefabs")]
+    public InputService_Mobile InputServiceMobilePrefab;
+    public InputService_Desktop InputServiceDesktopPrefab;
+    public Player PlayerPrefab;
     [Space(5f)] public Bullet bulletPrefab;
 
     public override void InstallBindings()
     {
-        Debug.Log("InstallBindings() for LocationInstaller");
-
+        BindEnemiesPrefabs();
         BindBullet();
         BindInputService();
         BindPlayer();
     }
 
+    void BindEnemiesPrefabs()
+    {
+        Container.Bind<EnemiesHolderUtil>()
+            .FromInstance(enemiesHolderUtil)
+            .AsSingle()
+            .NonLazy();
+    }
     void BindBullet()
     {
         Container.Bind<Bullet>()
             .FromInstance(bulletPrefab)
+            .AsSingle()
             .NonLazy();
     }
-
     void BindInputService()
     {
         InputService inputService;
@@ -50,7 +59,6 @@ public class GameProdInstaller : MonoInstaller
         .AsSingle()
         .NonLazy();
     }
-
     void BindPlayer()
     {
         var heroController = Container

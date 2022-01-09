@@ -39,7 +39,6 @@ public class Player : Entity
     {
         var bullet = Instantiate<Bullet>(bulletPrefab, shootingPoint.position, shootingPoint.rotation);
 
-        Debug.Log(shootingPoint.rotation + " ||" + bullet.transform.rotation);
         bullet.SetUpBullet();
     }
 

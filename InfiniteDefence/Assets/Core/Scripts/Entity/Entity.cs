@@ -8,6 +8,7 @@ public class Entity : MonoBehaviour
 {
     public float maxHp;
     public FloatReactiveProperty HP;
+    public ReactiveCommand<Entity> EntityKilled = new ReactiveCommand<Entity>();
 
     [Space(5f)]
     public float _movementSpeed = 5f;
