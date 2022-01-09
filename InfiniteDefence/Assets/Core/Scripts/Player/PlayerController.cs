@@ -15,14 +15,15 @@ public class PlayerController : MonoBehaviour
     private Vector2 posJoystickInput;
     private Vector2 rotJoystickInput;
 
-    private IInput inputService;
+    private InputService inputService;
 
     [Inject]
-    private void Construct(IInput inputService)
+    private void Construct(InputService inputService)
     {
         this.inputService = inputService;
         inputService.TargetMovement += TargetMovementReceived;
         inputService.TargetRotation += TargetRotationReceived;
+        inputService.PlayerTriesToShoot += HandlePlayerTriesToShoot;
 
         rb = GetComponent<Rigidbody2D>();
     }
@@ -31,12 +32,14 @@ public class PlayerController : MonoBehaviour
     {
         inputService.TargetMovement -= TargetMovementReceived;
         inputService.TargetRotation -= TargetRotationReceived;
+        inputService.PlayerTriesToShoot -= HandlePlayerTriesToShoot;
     }
 
     private void TargetMovementReceived(Vector2 targetMovement) => posJoystickInput = targetMovement;
-    private void TargetRotationReceived(Vector2 targetRotation)
+    private void TargetRotationReceived(Vector2 targetRotation) => rotJoystickInput = targetRotation;
+    private void HandlePlayerTriesToShoot()
     {
-        rotJoystickInput = targetRotation;
+        Debug.Log("Player tries to shoot");
     }
 
     private void FixedUpdate()

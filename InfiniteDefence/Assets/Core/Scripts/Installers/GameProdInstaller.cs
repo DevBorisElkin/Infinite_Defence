@@ -8,7 +8,9 @@ public class GameProdInstaller : MonoInstaller
 {
     public Transform PlayerInitialPos;
     public PlayerController PlayerPrefab;
-    public InputService InputServicePrefab;
+    public InputService_Mobile InputServiceMobilePrefab;
+    public InputService_Desktop InputServiceDesktopPrefab;
+    public GameObject mobileInput_Joysticks;
     public CinemachineVirtualCamera mainCamera;
 
     public override void InstallBindings()
@@ -21,11 +23,19 @@ public class GameProdInstaller : MonoInstaller
 
     void BindInputService()
     {
-        var inputService = Container
-            .InstantiatePrefabForComponent<InputService>(InputServicePrefab, Vector3.zero, Quaternion.identity, null);
+        InputService inputService;
 
-        Container.Bind<IInput>()
-        .To<InputService>()
+#if UNITY_EDITOR || UNITY_STANDALONE
+        inputService = Container
+            .InstantiatePrefabForComponent<InputService_Desktop>(InputServiceDesktopPrefab, Vector3.zero, Quaternion.identity, null);
+        mobileInput_Joysticks.SetActive(false);
+#elif UNITY_ANDROID || Unity_iOS
+        inputService = Container
+            .InstantiatePrefabForComponent<InputService_Mobile>(InputServiceMobilePrefab, Vector3.zero, Quaternion.identity, null);
+        mobileInput_Joysticks.SetActive(true);
+#endif
+
+        Container.Bind<InputService>()
         .FromInstance(inputService)
         .AsSingle()
         .NonLazy();
