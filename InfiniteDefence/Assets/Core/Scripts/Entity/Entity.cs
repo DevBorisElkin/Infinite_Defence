@@ -41,10 +41,10 @@ public class Entity : MonoBehaviour
     public virtual void PerformActions()
     {
         PerformMovement();
-        PerformRotation();
+        PerformRotation(out Vector2 angleToTarget);
     }
     public virtual void PerformMovement() { throw new NotImplementedException(); }
-    public virtual void PerformRotation() { throw new NotImplementedException(); }
+    public virtual void PerformRotation(out Vector2 angleAndDistance) { throw new NotImplementedException(); }
     public virtual void TakeDamage(float damage) { throw new NotImplementedException(); }
 
     public virtual void TryToShoot()

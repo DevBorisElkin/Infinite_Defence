@@ -80,12 +80,17 @@ MonoBehaviour:
   maxHp: 0
   HP:
     value: 10
-  _movementSpeed: 5
+  _movementSpeed: 500
   _rotationSpeed: 5
-  _maxSpeed: 15
+  _maxSpeed: 4
   movementForceMode: 0
   shootingCooldown: 0.5
   shootingPoint: {fileID: 5770081333513848952}
+  rb: {fileID: 0}
+  player: {fileID: 0}
+  minAngleToShoot: 5
+  minDistToShoot: 15
+  bulletPrefab: {fileID: 0}
 --- !u!50 &7275762688309431825
 Rigidbody2D:
   serializedVersion: 4
@@ -106,7 +111,7 @@ Rigidbody2D:
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
-  m_Constraints: 0
+  m_Constraints: 4
 --- !u!58 &5336339121766684351
 CircleCollider2D:
   m_ObjectHideFlags: 0

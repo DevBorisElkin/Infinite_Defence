@@ -8,6 +8,8 @@ public class Enemy : Entity
     public Player player;
     GameManager gameManager;
     protected Vector2 randomPositionAroundPlayer = new Vector2(2f, 7f);
+    [SerializeField] protected float minAngleToShoot = 5f;
+    [SerializeField] protected float minDistToShoot = 15f;
 
     private Vector2 targetMovement;
 
@@ -25,7 +27,8 @@ public class Enemy : Entity
     public override void PerformActions()
     {
         PerformMovement();
-        PerformRotation();
+        PerformRotation(out Vector2 angleDist);
+        CheckConditionsAndTryToShoot(angleDist);
     }
 
     public override void PerformMovement()
@@ -47,9 +50,24 @@ public class Enemy : Entity
             rb.velocity = rb.velocity.normalized * _maxSpeed;
     }
 
-    public override void PerformRotation()
+    public override void PerformRotation(out Vector2 angleDist)
     {
+        Vector2 targetDir = player.transform.position - transform.position;
+        float zAxis = Mathf.Atan2(targetDir.x, -targetDir.y) * Mathf.Rad2Deg;
+        Quaternion targetRot = Quaternion.Euler(0, 0, zAxis);
 
+        //transform.rotation = targetRot;
+        transform.rotation = Quaternion.Lerp(transform.rotation, targetRot, _rotationSpeed * Time.fixedDeltaTime);
+
+        angleDist = new Vector2(Vector3.Angle(targetDir, -transform.up), Vector2.Distance(transform.position, player.transform.position));
+    }
+
+    void CheckConditionsAndTryToShoot(Vector2 angleDist)
+    {
+        Debug.Log($"Angle to the target: " + angleDist);
+
+        if (angleDist.x <= minAngleToShoot && angleDist.y <= minDistToShoot)
+            TryToShoot();
     }
 
     void GetRandomMovementPosition()
@@ -61,5 +79,11 @@ public class Enemy : Entity
             Mathf.Clamp(generatedPos.y, -gameManager.mapBorders.y, gameManager.mapBorders.y));
 
         targetMovement = generatedPos;
+    }
+
+    private void OnDrawGizmos()
+    {
+        if (targetMovement != null)
+            Gizmos.DrawCube(targetMovement, Vector3.one);
     }
 }

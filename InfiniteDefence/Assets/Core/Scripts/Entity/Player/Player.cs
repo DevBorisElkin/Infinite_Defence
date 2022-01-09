@@ -48,7 +48,11 @@ public class Player : Entity
         ManageMaxForce();
     }
 
-    public override void PerformRotation() => ManageRotation();
+    public override void PerformRotation(out Vector2 angleDist)
+    {
+        angleDist = Vector2.zero;
+        ManageRotation();
+    }
 
     void ManageMovement()
     {
