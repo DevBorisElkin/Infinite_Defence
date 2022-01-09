@@ -19,6 +19,8 @@ public class GameProdInstaller : MonoInstaller
     public Player PlayerPrefab;
     [Space(5f)] public Bullet bulletPrefab;
 
+    private InputService inputService;
+
     public override void InstallBindings()
     {
         BindGameManager();
@@ -54,8 +56,6 @@ public class GameProdInstaller : MonoInstaller
     }
     void BindInputService()
     {
-        InputService inputService;
-
 #if UNITY_EDITOR || UNITY_STANDALONE
         inputService = Container
             .InstantiatePrefabForComponent<InputService_Desktop>(InputServiceDesktopPrefab, Vector3.zero, Quaternion.identity, null);
@@ -73,7 +73,7 @@ public class GameProdInstaller : MonoInstaller
     }
     void BindPlayer()
     {
-        var player = Container
+        Player player = Container
             .InstantiatePrefabForComponent<Player>(PlayerPrefab, PlayerInitialPos.position, Quaternion.identity, null);
 
         Container.Bind<Player>()
@@ -83,6 +83,9 @@ public class GameProdInstaller : MonoInstaller
 
         mainCamera.Follow = player.transform;
         mainCamera.LookAt = player.transform;
+
+        InputService_Desktop desktop = inputService as InputService_Desktop;
+        if (desktop != null) desktop.InjectPlayer(player);
     }
 
     public Entity SpawnEnemy(Entity selectedPrefab, Vector2 spawnPos)
