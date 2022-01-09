@@ -1,12 +1,17 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Zenject;
 
 public class InputService_Desktop : InputService
 {
     Vector2 screenResolutions;
+    Player player;
 
     private void Awake() => screenResolutions = new Vector2(Screen.width, Screen.height);
+
+    [Inject]
+    public void Construct(Player player) => this.player = player;
 
     public override void ManageInput() => HandlePlayerFullControls();
 
@@ -16,8 +21,13 @@ public class InputService_Desktop : InputService
 
         float movementHorizontalInput = 0;
         float movementVerticalInput = 0;
-        float rotationHorizontalInput = Remap(mousePos.x, 0, screenResolutions.x, -1f, 1f);
-        float rotationVerticalInput = Remap(mousePos.y, 0, screenResolutions.y, -1f, 1f);
+        //float rotationHorizontalInput = Remap(mousePos.x, 0, screenResolutions.x, -1f, 1f);
+        //float rotationVerticalInput = Remap(mousePos.y, 0, screenResolutions.y, -1f, 1f);
+
+        Vector3 objectPos = Camera.main.WorldToScreenPoint(player.transform.position);
+
+        float rotationHorizontalInput = mousePos.x - objectPos.x;
+        float rotationVerticalInput = mousePos.y - objectPos.y;
 
         if (Input.GetKey(KeyCode.A)) movementHorizontalInput -= 1;
         if (Input.GetKey(KeyCode.D)) movementHorizontalInput += 1;
