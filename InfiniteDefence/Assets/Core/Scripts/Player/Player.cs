@@ -3,57 +3,73 @@ using System.Collections.Generic;
 using UnityEngine;
 using Zenject;
 
-public class PlayerController : MonoBehaviour
+public class Player : Entity
 {
-    private Rigidbody2D rb;
-
-    public float _movementSpeed = 5f;
-    public float _rotationSpeed = 5f;
-    public float _maxSpeed = 15f;
-    public ForceMode2D movementForceMode;
-
     private Vector2 posJoystickInput;
     private Vector2 rotJoystickInput;
 
     private InputService inputService;
+    private Bullet bulletPrefab;
 
     [Inject]
-    private void Construct(InputService inputService)
+    private void Construct(InputService inputService, Bullet bulletPrefab)
     {
         this.inputService = inputService;
+        this.bulletPrefab = bulletPrefab;
+
         inputService.TargetMovement += TargetMovementReceived;
         inputService.TargetRotation += TargetRotationReceived;
-        inputService.PlayerTriesToShoot += HandlePlayerTriesToShoot;
+        inputService.PlayerTriesToShoot += TryToShoot;
 
         rb = GetComponent<Rigidbody2D>();
     }
 
-    private void OnDestroy()
+    public override void OnDestroy()
     {
+        base.OnDestroy();
         inputService.TargetMovement -= TargetMovementReceived;
         inputService.TargetRotation -= TargetRotationReceived;
-        inputService.PlayerTriesToShoot -= HandlePlayerTriesToShoot;
+        inputService.PlayerTriesToShoot -= TryToShoot;
     }
 
     private void TargetMovementReceived(Vector2 targetMovement) => posJoystickInput = targetMovement;
     private void TargetRotationReceived(Vector2 targetRotation) => rotJoystickInput = targetRotation;
-    private void HandlePlayerTriesToShoot()
+
+    public override void MakeShot()
     {
-        Debug.Log("Player tries to shoot");
+        var bullet = Instantiate<Bullet>(bulletPrefab, shootingPoint.position, shootingPoint.rotation);
+
+        Debug.Log(shootingPoint.rotation + " ||" + bullet.transform.rotation);
+        bullet.SetUpBullet();
     }
 
-    private void FixedUpdate()
+    public override void PerformMovement()
     {
         ManageMovement();
-        ManageRotation();
         ManageMaxForce();
     }
+
+    public override void PerformRotation() => ManageRotation();
 
     void ManageMovement()
     {
         if (posJoystickInput == Vector2.zero) return;
         Vector2 translation = new Vector2(posJoystickInput.x, posJoystickInput.y).normalized * _movementSpeed * Time.deltaTime;
         rb.AddForce(translation, movementForceMode);
+    }
+
+    void ManageMaxForce()
+    {
+        if (posJoystickInput != Vector2.zero)
+        {
+            if (rb.velocity.magnitude > _maxSpeed)
+                rb.velocity = rb.velocity.normalized * _maxSpeed;
+        }
+        else
+        {
+            rb.velocity = Vector2.zero;
+        }
+        rb.angularVelocity = 0;
     }
 
     void ManageRotation()
@@ -74,19 +90,5 @@ public class PlayerController : MonoBehaviour
 
             //TryToShoot(value, targetRot);
         }
-    }
-
-    void ManageMaxForce()
-    {
-        if (posJoystickInput != Vector2.zero)
-        {
-            if (rb.velocity.magnitude > _maxSpeed)
-                rb.velocity = rb.velocity.normalized * _maxSpeed;
-        }
-        else
-        {
-            rb.velocity = Vector2.zero;
-        }
-        rb.angularVelocity = 0;
     }
 }
