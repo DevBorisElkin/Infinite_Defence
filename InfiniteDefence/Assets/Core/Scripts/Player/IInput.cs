@@ -1,0 +1,11 @@
+using System;
+using UnityEngine;
+
+public interface IInput
+{
+    public event Action<Vector2> TargetMovement;
+
+    public event Action<Vector2> TargetRotation;
+
+    public void ManageJoystickInput();
+}
