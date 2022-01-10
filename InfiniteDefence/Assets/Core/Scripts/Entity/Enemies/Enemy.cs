@@ -16,9 +16,7 @@ public class Enemy : Entity
     public void Construct(Player player)
     {
         this.player = player;
-
         GetRandomMovementPosition();
-        rb = GetComponent<Rigidbody2D>();
     }
 
     public void AddMaxHp(float additionalHp)
@@ -40,6 +38,12 @@ public class Enemy : Entity
 
     public override void PerformMovement()
     {
+        ManageMovement();
+        ManageMaxForce();
+    }
+
+    void ManageMovement()
+    {
         if (Vector2.Distance(transform.position, targetMovement) > 1f)
         {
             Vector2 force = (targetMovement - new Vector2(transform.position.x, transform.position.y)).normalized * Time.fixedDeltaTime * _movementSpeed;
@@ -47,16 +51,8 @@ public class Enemy : Entity
             rb.AddForce(force);
         }
         else GetRandomMovementPosition();
-
-        ManageMaxForce();
     }
-
-    void ManageMaxForce()
-    {
-        if (rb.velocity.magnitude > _maxSpeed)
-            rb.velocity = rb.velocity.normalized * _maxSpeed;
-    }
-
+    
     public override void PerformRotation(out Vector2 angleDist)
     {
         Vector2 targetDir = player.transform.position - transform.position;

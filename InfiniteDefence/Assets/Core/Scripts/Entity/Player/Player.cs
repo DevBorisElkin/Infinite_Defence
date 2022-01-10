@@ -18,8 +18,6 @@ public class Player : Entity
         inputService.TargetMovement += TargetMovementReceived;
         inputService.TargetRotation += TargetRotationReceived;
         inputService.PlayerTriesToShoot += TryToShoot;
-
-        rb = GetComponent<Rigidbody2D>();
     }
 
     public override void OnDestroy()
@@ -52,7 +50,7 @@ public class Player : Entity
         rb.AddForce(translation, movementForceMode);
     }
 
-    void ManageMaxForce()
+    public override void ManageMaxForce()
     {
         if (posJoystickInput != Vector2.zero)
         {

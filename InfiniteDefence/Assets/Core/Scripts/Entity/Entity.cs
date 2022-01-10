@@ -20,30 +20,29 @@ public class Entity : MonoBehaviour
     public float _maxSpeed = 15f;
     public ForceMode2D movementForceMode;
 
-    protected bool canShoot;
-    public float attackDamage = 10f;
-    [Space(5f)] [SerializeField] protected float shootingCooldown = 0.5f;
+    [Space(5f)] public readonly float attackDamage = 10f;
+    [SerializeField] protected float shootingCooldown = 0.5f;
     [SerializeField] protected Transform shootingPoint;
 
     protected List<IDisposable> LifetimeDisposables;
-
     protected GameManager gameManager;
-
-    [SerializeField] protected Rigidbody2D rb;
+    protected Bullet bulletPrefab;
+    protected Rigidbody2D rb;
+    protected bool canShoot;
+    protected bool active_gameplay;
 
     [Header("HealthBarRelated")]
     [SerializeField] protected GameObject healthBarHolder;
     [SerializeField] protected Image healthBar;
 
-    protected bool active_gameplay;
-    protected Bullet bulletPrefab;
 
     [Inject]
     protected void Construct_General(GameManager gameManager, Bullet bulletPrefab)
     {
         this.bulletPrefab = bulletPrefab;
-        LifetimeDisposables = new List<IDisposable>();
         this.gameManager = gameManager;
+        LifetimeDisposables = new List<IDisposable>();
+        rb = GetComponent<Rigidbody2D>();
 
         active_gameplay = gameManager.Equals(GameState.Game) ? true : false;
 
@@ -75,6 +74,12 @@ public class Entity : MonoBehaviour
         PerformRotation(out Vector2 angleToTarget);
     }
     public virtual void PerformMovement() { throw new NotImplementedException(); }
+
+    public virtual void ManageMaxForce()
+    {
+        if (rb.velocity.magnitude > _maxSpeed)
+            rb.velocity = rb.velocity.normalized * _maxSpeed;
+    }
     public virtual void PerformRotation(out Vector2 angleAndDistance) { throw new NotImplementedException(); }
     
     public virtual void TryToShoot()
@@ -91,6 +96,7 @@ public class Entity : MonoBehaviour
         var bullet = Instantiate<Bullet>(bulletPrefab, shootingPoint.position, shootingPoint.rotation);
         bullet.SetUpBullet(this, gameObject.layer);
     }
+
     #region Health, Healthbar and Death
     public virtual void TakeDamage(float damage)
     {
@@ -100,7 +106,6 @@ public class Entity : MonoBehaviour
         if (HP.Value <= 0)
             Die();
     }
-
     public virtual void Die()
     {
         EntityKilled.Execute(this);
