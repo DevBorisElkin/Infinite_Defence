@@ -64,8 +64,6 @@ public class Enemy : Entity
 
     void CheckConditionsAndTryToShoot(Vector2 angleDist)
     {
-        Debug.Log($"Angle to the target: " + angleDist);
-
         if (angleDist.x <= minAngleToShoot && angleDist.y <= minDistToShoot)
             TryToShoot();
     }

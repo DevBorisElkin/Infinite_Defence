@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using UniRx;
 using System;
+using UnityEngine.UI;
+using DG.Tweening;
 
 public class Entity : MonoBehaviour
 {
-    public float maxHp;
+    protected float maxHp;
     public FloatReactiveProperty HP;
     public ReactiveCommand<Entity> EntityKilled = new ReactiveCommand<Entity>();
 
@@ -17,6 +19,7 @@ public class Entity : MonoBehaviour
     public ForceMode2D movementForceMode;
 
     protected bool canShoot;
+    public float attackDamage = 10f;
     [Space(5f)] [SerializeField] protected float shootingCooldown = 0.5f;
     [SerializeField] protected Transform shootingPoint;
 
@@ -24,10 +27,17 @@ public class Entity : MonoBehaviour
 
     [SerializeField] protected Rigidbody2D rb;
 
+    [Header("HealthBarRelated")]
+    [SerializeField] protected GameObject healthBarHolder;
+    [SerializeField] protected Image healthBar;
+
     public virtual void Awake()
     {
         LifetimeDisposables = new List<IDisposable>();
         canShoot = true;
+
+        maxHp = HP.Value;
+        ManageHealthBar();
     }
 
     public virtual void OnDestroy()
@@ -45,7 +55,19 @@ public class Entity : MonoBehaviour
     }
     public virtual void PerformMovement() { throw new NotImplementedException(); }
     public virtual void PerformRotation(out Vector2 angleAndDistance) { throw new NotImplementedException(); }
-    public virtual void TakeDamage(float damage) { throw new NotImplementedException(); }
+    public virtual void TakeDamage(float damage) 
+    {
+        HP.Value -= damage;
+        ManageHealthBar();
+
+        if (HP.Value <= 0)
+            Die();
+    }
+
+    public virtual void Die()
+    {
+        Destroy(gameObject);
+    }
 
     public virtual void TryToShoot()
     {
@@ -59,5 +81,21 @@ public class Entity : MonoBehaviour
     public virtual void MakeShot()
     {
         throw new NotImplementedException();
+    }
+
+    Tween healthBarTween;
+    void ManageHealthBar()
+    {
+        if (HP.Value == maxHp)
+        {
+            healthBarHolder.SetActive(false);
+            healthBar.fillAmount = 1f;
+        }
+        else
+        {
+            healthBarHolder.SetActive(true);
+            DOTween.Kill(healthBarTween);
+            healthBar.DOFillAmount(HP.Value / maxHp, 0.3f);
+        }
     }
 }

@@ -15,6 +15,6 @@ public class SimpleEnemy : Enemy
     public override void MakeShot()
     {
         var bullet = Instantiate<Bullet>(bulletPrefab, shootingPoint.position, shootingPoint.rotation);
-        bullet.SetUpBullet();
+        bullet.SetUpBullet(this, gameObject.layer);
     }
 }

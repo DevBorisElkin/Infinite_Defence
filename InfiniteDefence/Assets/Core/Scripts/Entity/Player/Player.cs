@@ -39,7 +39,7 @@ public class Player : Entity
     {
         var bullet = Instantiate<Bullet>(bulletPrefab, shootingPoint.position, shootingPoint.rotation);
 
-        bullet.SetUpBullet();
+        bullet.SetUpBullet(this, gameObject.layer);
     }
 
     public override void PerformMovement()

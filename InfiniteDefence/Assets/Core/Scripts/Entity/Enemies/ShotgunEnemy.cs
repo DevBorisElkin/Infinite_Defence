@@ -20,7 +20,7 @@ public class ShotgunEnemy : Enemy
         for (int i = -1; i < 2; i++)
         {
             var bullet = Instantiate<Bullet>(bulletPrefab, shootingPoint.position, shootingPoint.rotation * Quaternion.Euler(0, 0, angleBetweenBullets * i));
-            bullet.SetUpBullet();
+            bullet.SetUpBullet(this, gameObject.layer);
         }
     }
 }

@@ -12,6 +12,8 @@ public class InputService_Desktop : InputService
 
     void HandlePlayerFullControls()
     {
+        if (player == null) return; // Очень дорогая проверка на null, но она только на PC
+
         Vector2 mousePos = Input.mousePosition;
 
         float movementHorizontalInput = 0;
