@@ -28,7 +28,7 @@ public class GameProdInstaller : MonoInstaller
         BindEnemiesPrefabs(); // safe
         BindUIManager(); // safe
         BindGameManager();  // requires EnemiesHolderUtil , UI_Manager
-        BindInputService(); // sometimes requires Player
+        BindInputService(); // LAZY requires Player
         BindBullet();
         BindPlayer(); // requires GameManager, input service, bullet prefab
         LazyBind();

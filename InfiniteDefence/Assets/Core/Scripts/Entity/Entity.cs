@@ -35,13 +35,16 @@ public class Entity : MonoBehaviour
     [SerializeField] protected GameObject healthBarHolder;
     [SerializeField] protected Image healthBar;
 
-    protected bool active_gameplay;
+    [SerializeField] protected bool active_gameplay;
 
     [Inject]
     protected void Construct_General(GameManager gameManager)
     {
+        //Debug.Log("Entity_Construct General");
         LifetimeDisposables = new List<IDisposable>();
         this.gameManager = gameManager;
+
+        active_gameplay = gameManager.Equals(GameState.Game) ? true : false;
 
         gameManager.AssignedGameState.Subscribe(_ => {
             active_gameplay = _.Equals(GameState.Game) ? true : false;
@@ -88,7 +91,7 @@ public class Entity : MonoBehaviour
 
     public virtual void TryToShoot()
     {
-        if (!canShoot) return;
+        if (!canShoot || !active_gameplay) return;
 
         canShoot = false;
         MakeShot();

@@ -50,8 +50,6 @@ public class GameManager : MonoBehaviour
     [Inject]
     public void Construct(EnemiesHolderUtil enemiesHolderUtil, UI_Manager ui_manager)
     {
-        AssignedGameState.Value = GameState.ChallengeChoice;
-
         this.enemiesPrefabs = enemiesHolderUtil.enemiesPrefabs;
         this.ui_manager = ui_manager;
 
@@ -59,6 +57,7 @@ public class GameManager : MonoBehaviour
 
         Debug.Log("Construct finished, setting up challenge");
 
+        AssignedGameState.Value = GameState.ChallengeChoice;
         ui_manager.SetUiState(AssignedGameState.Value);
 
         ui_manager.ChallengeWasChosen.Subscribe(_ => 
@@ -85,9 +84,11 @@ public class GameManager : MonoBehaviour
 
     void StartRound()
     {
+        AssignedGameState.Value = GameState.Game;
+        ui_manager.SetUiState(AssignedGameState.Value);
+
         enemies = new List<Entity>();
         StartCoroutine(EnemySpawnCoroutine());
-        ui_manager.SetUiState(GameState.Game);
     }
 
     void RestartGame() => SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
@@ -96,7 +97,7 @@ public class GameManager : MonoBehaviour
     {
         int maxEnemies = assignedChallenge.Equals(Challenge.Too_Many_Enemies) ? maxEnemiesOnMap_tooManyEnemies : maxEnemiesOnMap;
 
-        while (true)
+        while (AssignedGameState.Value.Equals(GameState.Game))
         {
             if(enemies.Count < maxEnemies)
             {
@@ -117,6 +118,8 @@ public class GameManager : MonoBehaviour
 
     void SpawnEnemy()
     {
+        if (!AssignedGameState.Value.Equals(GameState.Game)) return;
+
         Entity selectedPrefab = assignedChallenge.Equals(Challenge.New_Enemy_Types) ?
             enemiesPrefabs[UnityEngine.Random.Range(0, enemiesPrefabs.Count)] :
             enemiesPrefabs[0];
