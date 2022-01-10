@@ -35,12 +35,13 @@ public class Entity : MonoBehaviour
     [SerializeField] protected GameObject healthBarHolder;
     [SerializeField] protected Image healthBar;
 
-    [SerializeField] protected bool active_gameplay;
+    protected bool active_gameplay;
+    protected Bullet bulletPrefab;
 
     [Inject]
-    protected void Construct_General(GameManager gameManager)
+    protected void Construct_General(GameManager gameManager, Bullet bulletPrefab)
     {
-        //Debug.Log("Entity_Construct General");
+        this.bulletPrefab = bulletPrefab;
         LifetimeDisposables = new List<IDisposable>();
         this.gameManager = gameManager;
 
@@ -75,20 +76,7 @@ public class Entity : MonoBehaviour
     }
     public virtual void PerformMovement() { throw new NotImplementedException(); }
     public virtual void PerformRotation(out Vector2 angleAndDistance) { throw new NotImplementedException(); }
-    public virtual void TakeDamage(float damage) 
-    {
-        HP.Value -= damage;
-        ManageHealthBar();
-
-        if (HP.Value <= 0)
-            Die();
-    }
-
-    public virtual void Die()
-    {
-        Destroy(gameObject);
-    }
-
+    
     public virtual void TryToShoot()
     {
         if (!canShoot || !active_gameplay) return;
@@ -100,7 +88,23 @@ public class Entity : MonoBehaviour
 
     public virtual void MakeShot()
     {
-        throw new NotImplementedException();
+        var bullet = Instantiate<Bullet>(bulletPrefab, shootingPoint.position, shootingPoint.rotation);
+        bullet.SetUpBullet(this, gameObject.layer);
+    }
+    #region Health, Healthbar and Death
+    public virtual void TakeDamage(float damage)
+    {
+        HP.Value -= damage;
+        ManageHealthBar();
+
+        if (HP.Value <= 0)
+            Die();
+    }
+
+    public virtual void Die()
+    {
+        EntityKilled.Execute(this);
+        Destroy(gameObject);
     }
 
     Tween healthBarTween;
@@ -118,4 +122,5 @@ public class Entity : MonoBehaviour
             healthBar.DOFillAmount(HP.Value / maxHp, 0.3f);
         }
     }
+    #endregion
 }

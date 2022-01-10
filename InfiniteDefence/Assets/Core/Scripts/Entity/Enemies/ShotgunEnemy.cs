@@ -5,18 +5,10 @@ using Zenject;
 
 public class ShotgunEnemy : Enemy
 {
-    public Bullet bulletPrefab;
     [SerializeField] protected float angleBetweenBullets = 6f;
 
-    [Inject]
-    private void Construct(Bullet bulletPrefab)
-    {
-        this.bulletPrefab = bulletPrefab;
-        rb = GetComponent<Rigidbody2D>();
-    }
     public override void MakeShot()
     {
-
         for (int i = -1; i < 2; i++)
         {
             var bullet = Instantiate<Bullet>(bulletPrefab, shootingPoint.position, shootingPoint.rotation * Quaternion.Euler(0, 0, angleBetweenBullets * i));

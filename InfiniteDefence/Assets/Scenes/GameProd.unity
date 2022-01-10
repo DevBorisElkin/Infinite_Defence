@@ -2343,7 +2343,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 0}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -2982,7 +2982,7 @@ Canvas:
   m_SortingBucketNormalizedSize: 0
   m_AdditionalShaderChannelsFlag: 0
   m_SortingLayerID: 0
-  m_SortingOrder: 2
+  m_SortingOrder: 1
   m_TargetDisplay: 0
 --- !u!224 &1553339013
 RectTransform:
@@ -2998,7 +2998,7 @@ RectTransform:
   - {fileID: 622841824}
   - {fileID: 186321454}
   m_Father: {fileID: 1737209621}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -3307,8 +3307,8 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 2082424658}
   - {fileID: 1553339013}
+  - {fileID: 2082424658}
   - {fileID: 1117464840}
   m_Father: {fileID: 1502370834}
   m_RootOrder: 2
@@ -3422,13 +3422,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b472dba36ab706a4a9eddf74aa84f44f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enemyHp: 15
   spawnInterval: {x: 3, y: 6}
   maxEnemiesOnMap: 15
   mapBorders: {x: 18.5, y: 18}
   spawnInterval_Increased: {x: 1, y: 3}
   maxEnemiesOnMap_tooManyEnemies: 30
-  enemyHp_increasedEnemyHealth: 30
+  enemyHp_additionalEnemyHealth: 15
+  AssignedGameState:
+    value: 0
   enemiesPrefabs: []
 --- !u!1 &1923111908
 GameObject:
@@ -3800,7 +3801,7 @@ RectTransform:
   - {fileID: 1374964463}
   - {fileID: 1951553472}
   m_Father: {fileID: 1737209621}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -3866,7 +3867,7 @@ Canvas:
   m_SortingBucketNormalizedSize: 0
   m_AdditionalShaderChannelsFlag: 25
   m_SortingLayerID: 0
-  m_SortingOrder: 1
+  m_SortingOrder: 2
   m_TargetDisplay: 0
 --- !u!1 &2117093015
 GameObject:

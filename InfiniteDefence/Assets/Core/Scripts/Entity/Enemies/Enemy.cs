@@ -15,7 +15,6 @@ public class Enemy : Entity
     [Inject]
     public void Construct(Player player)
     {
-        Debug.Log("Construct for Enemy " + name);
         this.player = player;
 
         GetRandomMovementPosition();
@@ -64,7 +63,6 @@ public class Enemy : Entity
         float zAxis = Mathf.Atan2(targetDir.x, -targetDir.y) * Mathf.Rad2Deg;
         Quaternion targetRot = Quaternion.Euler(0, 0, zAxis);
 
-        //transform.rotation = targetRot;
         transform.rotation = Quaternion.Lerp(transform.rotation, targetRot, _rotationSpeed * Time.fixedDeltaTime);
 
         angleDist = new Vector2(Vector3.Angle(targetDir, -transform.up), Vector2.Distance(transform.position, player.transform.position));
@@ -87,9 +85,10 @@ public class Enemy : Entity
         targetMovement = generatedPos;
     }
 
-    private void OnDrawGizmos()
-    {
-        if (targetMovement != null)
-            Gizmos.DrawCube(targetMovement, Vector3.one);
-    }
+    // Uncomment to see position's generation
+    //private void OnDrawGizmos()
+    //{
+    //    if (targetMovement != null)
+    //        Gizmos.DrawCube(targetMovement, Vector3.one);
+    //}
 }

@@ -9,13 +9,11 @@ public class Player : Entity
     private Vector2 rotJoystickInput;
 
     private InputService inputService;
-    private Bullet bulletPrefab;
 
     [Inject]
-    private void Construct(InputService inputService, Bullet bulletPrefab)
+    private void Construct(InputService inputService)
     {
         this.inputService = inputService;
-        this.bulletPrefab = bulletPrefab;
 
         inputService.TargetMovement += TargetMovementReceived;
         inputService.TargetRotation += TargetRotationReceived;
@@ -34,13 +32,6 @@ public class Player : Entity
 
     private void TargetMovementReceived(Vector2 targetMovement) => posJoystickInput = targetMovement;
     private void TargetRotationReceived(Vector2 targetRotation) => rotJoystickInput = targetRotation;
-
-    public override void MakeShot()
-    {
-        var bullet = Instantiate<Bullet>(bulletPrefab, shootingPoint.position, shootingPoint.rotation);
-
-        bullet.SetUpBullet(this, gameObject.layer);
-    }
 
     public override void PerformMovement()
     {
