@@ -65,15 +65,14 @@ public class UI_Manager : MonoBehaviour
     void PrepareChoiceButtons()
     {
         choiceButtons = choiceButtons.OrderBy(emp => Guid.NewGuid()).ToList();
+        for (int i = 0; i < choiceButtons.Count; i++)
+            choiceButtons[i].transform.SetSiblingIndex(i);
 
         foreach (var a in randomChallengeButtons) a.Hide();
-
-        for (int i = 0; i < choiceButtons.Count; i++)
-            SubscribeChoiceButton(i);
     }
-    void SubscribeChoiceButton(int i)
+    public void OnClick_ChoiceButtonClicked(int i)
     {
-        choiceButtons[i].OnClickAsObservable().First().Subscribe(_ => { OnClick_RandomFaithChosen(i); }).AddTo(LifetimeDisposables);
+        ManageFaithChoice(i);
     }
 
     void OnClick_RandomFaithChosen(int choice)
