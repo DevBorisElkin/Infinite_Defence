@@ -110,7 +110,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   HP:
-    value: 30
+    value: 10
   _movementSpeed: 500
   _rotationSpeed: 5
   _maxSpeed: 4
@@ -121,6 +121,7 @@ MonoBehaviour:
   rb: {fileID: 0}
   healthBarHolder: {fileID: 6011743828686239259}
   healthBar: {fileID: 1127049897719751679}
+  active_gameplay: 0
   player: {fileID: 0}
   minAngleToShoot: 5
   minDistToShoot: 15

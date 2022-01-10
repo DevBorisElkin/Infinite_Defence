@@ -22,6 +22,15 @@ public class Enemy : Entity
         rb = GetComponent<Rigidbody2D>();
     }
 
+    public void AddMaxHp(float additionalHp)
+    {
+        if(additionalHp > 0)
+        {
+            maxHp += additionalHp;
+            HP.Value = maxHp;
+        }
+    }
+
     public override void PerformActions()
     {
         if (!active_gameplay) return;

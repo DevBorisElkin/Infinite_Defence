@@ -10,7 +10,6 @@ using UnityEngine.SceneManagement;
 public class GameManager : MonoBehaviour
 {
     [Header("Default")]
-    [SerializeField] private float enemyHp;
     [SerializeField] private Vector2 spawnInterval;
     [SerializeField] private int maxEnemiesOnMap;
     public Vector2 mapBorders = new Vector2(18.5f, 18.0f);
@@ -20,7 +19,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private int maxEnemiesOnMap_tooManyEnemies;
 
     [Header("Increased Enemy Health")]
-    [SerializeField] private float enemyHp_increasedEnemyHealth;
+    [SerializeField] private float enemyHp_additionalEnemyHealth = 15;
     
     Challenge assignedChallenge;
     public ReactiveProperty<GameState> AssignedGameState = new ReactiveProperty<GameState>();
@@ -124,10 +123,15 @@ public class GameManager : MonoBehaviour
             enemiesPrefabs[UnityEngine.Random.Range(0, enemiesPrefabs.Count)] :
             enemiesPrefabs[0];
 
+        float additionalHp = assignedChallenge.Equals(Challenge.Increased_Enemy_Health) ? enemyHp_additionalEnemyHealth : 0f;
+
         var enemy = SpawnEnemyCommand?.Invoke(selectedPrefab, GetRandomSpawnPosition());
 
         if(enemy != null)
         {
+            Enemy _enemy = enemy as Enemy;
+            if(_enemy != null)
+                _enemy.AddMaxHp(additionalHp);
             enemies.Add(enemy);
             enemy.EntityKilled.Subscribe(_ => OnEntityDead(_)).AddTo(LifetimeDisposables);
         }
