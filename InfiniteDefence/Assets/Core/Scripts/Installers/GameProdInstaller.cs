@@ -68,9 +68,13 @@ public class GameProdInstaller : MonoInstaller
     void BindInputService()
     {
 #if UNITY_EDITOR || UNITY_STANDALONE
+        //inputService = Container
+        //    .InstantiatePrefabForComponent<InputService_Desktop>(InputServiceDesktopPrefab, Vector3.zero, Quaternion.identity, null);
+        //mobileInput_Joysticks.SetActive(false);
+
         inputService = Container
-            .InstantiatePrefabForComponent<InputService_Desktop>(InputServiceDesktopPrefab, Vector3.zero, Quaternion.identity, null);
-        mobileInput_Joysticks.SetActive(false);
+            .InstantiatePrefabForComponent<InputService_Mobile>(InputServiceMobilePrefab, Vector3.zero, Quaternion.identity, null);
+        mobileInput_Joysticks.SetActive(true);
 #elif UNITY_ANDROID || Unity_iOS
         inputService = Container
             .InstantiatePrefabForComponent<InputService_Mobile>(InputServiceMobilePrefab, Vector3.zero, Quaternion.identity, null);

@@ -29,6 +29,6 @@ public class InputService_Mobile : InputService
 
     void HandleShootingInput(Vector2 rotationInput)
     {
-        if (rotationInput.x >= 0.5f || rotationInput.y >= 0.5f) PlayerTriesToShoot?.Invoke();
+        if (Mathf.Abs(rotationInput.x) >= 0.5f || Mathf.Abs(rotationInput.y) >= 0.5f) PlayerTriesToShoot?.Invoke();
     }
 }
