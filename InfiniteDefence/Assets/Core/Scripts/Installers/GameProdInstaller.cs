@@ -12,6 +12,7 @@ public class GameProdInstaller : MonoInstaller
     public CinemachineVirtualCamera mainCamera;
     public EnemiesHolderUtil enemiesHolderUtil;
     public GameManager gameManager;
+    public UI_Manager UI_Manager;
 
     [Header("Prefabs")]
     public InputService_Mobile InputServiceMobilePrefab;
@@ -23,11 +24,19 @@ public class GameProdInstaller : MonoInstaller
 
     public override void InstallBindings()
     {
+        BindUIManager();
         BindGameManager();
         BindEnemiesPrefabs();
         BindBullet();
         BindInputService();
         BindPlayer();
+    }
+    void BindUIManager()
+    {
+        Container.Bind<UI_Manager>()
+            .FromInstance(UI_Manager)
+            .AsSingle()
+            .NonLazy();
     }
 
     void BindGameManager()

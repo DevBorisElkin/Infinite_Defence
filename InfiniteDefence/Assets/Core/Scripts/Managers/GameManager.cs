@@ -5,6 +5,7 @@ using static Enums;
 using UniRx;
 using Zenject;
 using System;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
@@ -22,44 +23,70 @@ public class GameManager : MonoBehaviour
     [SerializeField] private float enemyHp_increasedEnemyHealth;
     
     Challenge assignedChallenge;
+    GameState assignedGameState;
 
     [SerializeField] private List<Entity> enemiesPrefabs;
     private List<Entity> enemies;
 
     private List<IDisposable> LifetimeDisposables;
 
+    UI_Manager ui_manager;
+
     public Func<Entity, Vector2, Entity> SpawnEnemyCommand;
 
     [Inject]
-    public void Construct(EnemiesHolderUtil enemiesHolderUtil)
+    public void Construct(EnemiesHolderUtil enemiesHolderUtil, UI_Manager ui_manager, Player player)
     {
         this.enemiesPrefabs = enemiesHolderUtil.enemiesPrefabs;
+        this.ui_manager = ui_manager;
+
         LifetimeDisposables = new List<IDisposable>();
 
         Debug.Log("Construct finished, setting up challenge");
 
-        SetUpChallenge((Challenge)UnityEngine.Random.Range(0, 3));
-        StartRound();
+        ui_manager.SetUiState(GameState.ChallengeChoice);
+
+        ui_manager.ChallengeWasChosen.Subscribe(_ => 
+        {
+            SetUpChallenge(_);
+        }).AddTo(LifetimeDisposables);
+
+        ui_manager.PlayButtonPressed.Subscribe(_ => 
+        {
+            StartRound();
+        }).AddTo(LifetimeDisposables);
+
+        ui_manager.RestartButtonPressed.Subscribe(_ =>
+        {
+            RestartGame();
+        }).AddTo(LifetimeDisposables);
+
+        player.HP.Subscribe(_ => 
+        { 
+            if(player.HP.Value <= 0 && assignedGameState != GameState.End)
+            {
+                // Game Over basically
+                assignedGameState = GameState.End;
+                ui_manager.SetUiState(GameState.End);
+            }
+        }).AddTo(LifetimeDisposables);
     }
 
-    private void OnDestroy()
-    {
-        foreach (var a in LifetimeDisposables)
-            a.Dispose();
-    }
-
-    public void SetUpChallenge(Challenge challenge)
+    void SetUpChallenge(Challenge challenge)
     {
         assignedChallenge = challenge;
         Debug.Log("Chosen Challenge: " + challenge);
     }
 
-    public void StartRound()
+    void StartRound()
     {
         enemies = new List<Entity>();
         StartCoroutine(EnemySpawnCoroutine());
+        ui_manager.SetUiState(GameState.Game);
     }
 
+    void RestartGame() => SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+    
     IEnumerator EnemySpawnCoroutine()
     {
         int maxEnemies = assignedChallenge.Equals(Challenge.Too_Many_Enemies) ? maxEnemiesOnMap_tooManyEnemies : maxEnemiesOnMap;
@@ -108,5 +135,11 @@ public class GameManager : MonoBehaviour
         if (randomSpawnPos == 2) return new Vector3( UnityEngine.Random.Range(-mapBorders.x, mapBorders.x), -mapBorders.y);
         if (randomSpawnPos == 3) return new Vector3( UnityEngine.Random.Range(-mapBorders.x, mapBorders.x), mapBorders.y);
         return Vector3.zero;
+    }
+
+    private void OnDestroy()
+    {
+        foreach (var a in LifetimeDisposables)
+            a.Dispose();
     }
 }
