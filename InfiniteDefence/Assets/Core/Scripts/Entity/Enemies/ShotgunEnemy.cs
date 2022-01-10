@@ -6,6 +6,8 @@ using Zenject;
 public class ShotgunEnemy : Enemy
 {
     public Bullet bulletPrefab;
+    [SerializeField] protected float angleBetweenBullets = 6f;
+
     [Inject]
     private void Construct(Bullet bulletPrefab)
     {
@@ -14,7 +16,11 @@ public class ShotgunEnemy : Enemy
     }
     public override void MakeShot()
     {
-        var bullet = Instantiate<Bullet>(bulletPrefab, shootingPoint.position, shootingPoint.rotation);
-        bullet.SetUpBullet();
+
+        for (int i = -1; i < 2; i++)
+        {
+            var bullet = Instantiate<Bullet>(bulletPrefab, shootingPoint.position, shootingPoint.rotation * Quaternion.Euler(0, 0, angleBetweenBullets * i));
+            bullet.SetUpBullet();
+        }
     }
 }
