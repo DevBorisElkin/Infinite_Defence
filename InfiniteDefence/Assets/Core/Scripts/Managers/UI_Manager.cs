@@ -75,11 +75,6 @@ public class UI_Manager : MonoBehaviour
         ManageFaithChoice(i);
     }
 
-    void OnClick_RandomFaithChosen(int choice)
-    {
-        ManageFaithChoice(choice);
-    }
-
     async void ManageFaithChoice(int choice)
     {
         if (!canMakeChoice) return;

@@ -21,15 +21,17 @@ public class GameProdInstaller : MonoInstaller
     [Space(5f)] public Bullet bulletPrefab;
 
     private InputService inputService;
+    private Player player;
 
     public override void InstallBindings()
     {
-        BindUIManager();
-        BindGameManager();
-        BindEnemiesPrefabs();
+        BindEnemiesPrefabs(); // safe
+        BindUIManager(); // safe
+        BindGameManager();  // requires EnemiesHolderUtil , UI_Manager
+        BindInputService(); // sometimes requires Player
         BindBullet();
-        BindInputService();
-        BindPlayer();
+        BindPlayer(); // requires GameManager, input service, bullet prefab
+        LazyBind();
     }
     void BindUIManager()
     {
@@ -82,7 +84,7 @@ public class GameProdInstaller : MonoInstaller
     }
     void BindPlayer()
     {
-        Player player = Container
+        player = Container
             .InstantiatePrefabForComponent<Player>(PlayerPrefab, PlayerInitialPos.position, Quaternion.identity, null);
 
         Container.Bind<Player>()
@@ -92,9 +94,14 @@ public class GameProdInstaller : MonoInstaller
 
         mainCamera.Follow = player.transform;
         mainCamera.LookAt = player.transform;
+    }
 
+    void LazyBind()
+    {
         InputService_Desktop desktop = inputService as InputService_Desktop;
         if (desktop != null) desktop.InjectPlayer(player);
+
+        gameManager.InjectPlayer(player);
     }
 
     public Entity SpawnEnemy(Entity selectedPrefab, Vector2 spawnPos)

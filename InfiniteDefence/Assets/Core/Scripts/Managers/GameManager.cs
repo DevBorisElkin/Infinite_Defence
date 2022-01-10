@@ -23,7 +23,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private float enemyHp_increasedEnemyHealth;
     
     Challenge assignedChallenge;
-    GameState assignedGameState;
+    public ReactiveProperty<GameState> AssignedGameState = new ReactiveProperty<GameState>();
 
     [SerializeField] private List<Entity> enemiesPrefabs;
     private List<Entity> enemies;
@@ -34,9 +34,24 @@ public class GameManager : MonoBehaviour
 
     public Func<Entity, Vector2, Entity> SpawnEnemyCommand;
 
-    [Inject]
-    public void Construct(EnemiesHolderUtil enemiesHolderUtil, UI_Manager ui_manager, Player player)
+    public void InjectPlayer(Player player)
     {
+        player.HP.Subscribe(_ =>
+        {
+            if (player.HP.Value <= 0 && AssignedGameState.Value != GameState.End)
+            {
+                // Game Over basically
+                AssignedGameState.Value = GameState.End;
+                ui_manager.SetUiState(AssignedGameState.Value);
+            }
+        }).AddTo(LifetimeDisposables);
+    }
+
+    [Inject]
+    public void Construct(EnemiesHolderUtil enemiesHolderUtil, UI_Manager ui_manager)
+    {
+        AssignedGameState.Value = GameState.ChallengeChoice;
+
         this.enemiesPrefabs = enemiesHolderUtil.enemiesPrefabs;
         this.ui_manager = ui_manager;
 
@@ -44,7 +59,7 @@ public class GameManager : MonoBehaviour
 
         Debug.Log("Construct finished, setting up challenge");
 
-        ui_manager.SetUiState(GameState.ChallengeChoice);
+        ui_manager.SetUiState(AssignedGameState.Value);
 
         ui_manager.ChallengeWasChosen.Subscribe(_ => 
         {
@@ -59,16 +74,6 @@ public class GameManager : MonoBehaviour
         ui_manager.RestartButtonPressed.Subscribe(_ =>
         {
             RestartGame();
-        }).AddTo(LifetimeDisposables);
-
-        player.HP.Subscribe(_ => 
-        { 
-            if(player.HP.Value <= 0 && assignedGameState != GameState.End)
-            {
-                // Game Over basically
-                assignedGameState = GameState.End;
-                ui_manager.SetUiState(GameState.End);
-            }
         }).AddTo(LifetimeDisposables);
     }
 

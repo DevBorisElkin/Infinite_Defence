@@ -5,6 +5,8 @@ using UniRx;
 using System;
 using UnityEngine.UI;
 using DG.Tweening;
+using Zenject;
+using static Enums;
 
 public class Entity : MonoBehaviour
 {
@@ -25,15 +27,29 @@ public class Entity : MonoBehaviour
 
     protected List<IDisposable> LifetimeDisposables;
 
+    protected GameManager gameManager;
+
     [SerializeField] protected Rigidbody2D rb;
 
     [Header("HealthBarRelated")]
     [SerializeField] protected GameObject healthBarHolder;
     [SerializeField] protected Image healthBar;
 
-    public virtual void Awake()
+    protected bool active_gameplay;
+
+    [Inject]
+    protected void Construct_General(GameManager gameManager)
     {
         LifetimeDisposables = new List<IDisposable>();
+        this.gameManager = gameManager;
+
+        gameManager.AssignedGameState.Subscribe(_ => {
+            active_gameplay = _.Equals(GameState.Game) ? true : false;
+        }).AddTo(LifetimeDisposables);
+    }
+
+    public virtual void Awake()
+    {
         canShoot = true;
 
         maxHp = HP.Value;
@@ -50,6 +66,7 @@ public class Entity : MonoBehaviour
 
     public virtual void PerformActions()
     {
+        if (!active_gameplay) return;
         PerformMovement();
         PerformRotation(out Vector2 angleToTarget);
     }

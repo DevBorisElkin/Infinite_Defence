@@ -6,7 +6,6 @@ using Zenject;
 public class Enemy : Entity
 {
     public Player player;
-    GameManager gameManager;
     protected Vector2 randomPositionAroundPlayer = new Vector2(2f, 7f);
     [SerializeField] protected float minAngleToShoot = 5f;
     [SerializeField] protected float minDistToShoot = 15f;
@@ -14,11 +13,10 @@ public class Enemy : Entity
     private Vector2 targetMovement;
 
     [Inject]
-    public void Construct(Player player, GameManager gameManager)
+    public void Construct(Player player)
     {
         Debug.Log("Construct for Enemy " + name);
         this.player = player;
-        this.gameManager = gameManager;
 
         GetRandomMovementPosition();
         rb = GetComponent<Rigidbody2D>();
@@ -26,6 +24,7 @@ public class Enemy : Entity
 
     public override void PerformActions()
     {
+        if (!active_gameplay) return;
         PerformMovement();
         PerformRotation(out Vector2 angleDist);
         CheckConditionsAndTryToShoot(angleDist);
