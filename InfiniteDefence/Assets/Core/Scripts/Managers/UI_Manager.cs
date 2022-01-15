@@ -72,15 +72,13 @@ public class UI_Manager : MonoBehaviour
     }
     public void OnClick_ChoiceButtonClicked(int i)
     {
-        ManageFaithChoice(i);
+        ManageFateChoice(i);
     }
 
-    async void ManageFaithChoice(int choice)
+    async void ManageFateChoice(int choice)
     {
         if (!canMakeChoice) return;
         canMakeChoice = false;
-
-        Debug.Log($"ManageFaithChoice {choice}");
 
         RandomChallengeButton button = randomChallengeButtons[choice];
 

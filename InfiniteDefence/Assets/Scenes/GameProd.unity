@@ -870,7 +870,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: You have eventually died, maybe you should play better
+  m_text: You have eventually died, try better next time :)
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -2737,6 +2737,7 @@ MonoBehaviour:
   enemiesPrefabs:
   - {fileID: 7339332185599814340, guid: 0a076ba8e8d04c146aabf52c37384baf, type: 3}
   - {fileID: 990210041274014589, guid: d089ed96662bca84c85696d34dcca583, type: 3}
+  - {fileID: 6979099404677152851, guid: 8243c305555f6c045b06e3f951c7a320, type: 3}
 --- !u!1 &1502370833
 GameObject:
   m_ObjectHideFlags: 0

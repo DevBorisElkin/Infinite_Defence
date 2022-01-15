@@ -25,12 +25,12 @@ public class GameProdInstaller : MonoInstaller
 
     public override void InstallBindings()
     {
-        BindEnemiesPrefabs(); // safe
-        BindUIManager(); // safe
-        BindGameManager();  // requires EnemiesHolderUtil , UI_Manager
-        BindInputService(); // LAZY requires Player
+        BindEnemiesPrefabs();
+        BindUIManager();
+        BindGameManager();
+        BindInputService();
         BindBullet();
-        BindPlayer(); // requires GameManager, input service, bullet prefab
+        BindPlayer();
         LazyBind();
     }
     void BindUIManager()
@@ -68,13 +68,9 @@ public class GameProdInstaller : MonoInstaller
     void BindInputService()
     {
 #if UNITY_EDITOR || UNITY_STANDALONE
-        //inputService = Container
-        //    .InstantiatePrefabForComponent<InputService_Desktop>(InputServiceDesktopPrefab, Vector3.zero, Quaternion.identity, null);
-        //mobileInput_Joysticks.SetActive(false);
-
         inputService = Container
-            .InstantiatePrefabForComponent<InputService_Mobile>(InputServiceMobilePrefab, Vector3.zero, Quaternion.identity, null);
-        mobileInput_Joysticks.SetActive(true);
+            .InstantiatePrefabForComponent<InputService_Desktop>(InputServiceDesktopPrefab, Vector3.zero, Quaternion.identity, null);
+        mobileInput_Joysticks.SetActive(false);
 #elif UNITY_ANDROID || Unity_iOS
         inputService = Container
             .InstantiatePrefabForComponent<InputService_Mobile>(InputServiceMobilePrefab, Vector3.zero, Quaternion.identity, null);

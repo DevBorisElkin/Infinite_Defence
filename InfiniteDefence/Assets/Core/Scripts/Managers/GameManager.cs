@@ -33,28 +33,13 @@ public class GameManager : MonoBehaviour
 
     public Func<Entity, Vector2, Entity> SpawnEnemyCommand;
 
-    public void InjectPlayer(Player player)
-    {
-        player.HP.Subscribe(_ =>
-        {
-            if (player.HP.Value <= 0 && AssignedGameState.Value != GameState.End)
-            {
-                // Game Over basically
-                AssignedGameState.Value = GameState.End;
-                ui_manager.SetUiState(AssignedGameState.Value);
-            }
-        }).AddTo(LifetimeDisposables);
-    }
-
     [Inject]
     public void Construct(EnemiesHolderUtil enemiesHolderUtil, UI_Manager ui_manager)
     {
-        this.enemiesPrefabs = enemiesHolderUtil.enemiesPrefabs;
-        this.ui_manager = ui_manager;
-
         LifetimeDisposables = new List<IDisposable>();
 
-        Debug.Log("Construct finished, setting up challenge");
+        this.enemiesPrefabs = enemiesHolderUtil.enemiesPrefabs;
+        this.ui_manager = ui_manager;
 
         AssignedGameState.Value = GameState.ChallengeChoice;
         ui_manager.SetUiState(AssignedGameState.Value);
@@ -74,11 +59,21 @@ public class GameManager : MonoBehaviour
             RestartGame();
         }).AddTo(LifetimeDisposables);
     }
-
+    public void InjectPlayer(Player player)
+    {
+        player.HP.Subscribe(_ =>
+        {
+            if (player.HP.Value <= 0 && AssignedGameState.Value != GameState.End)
+            {
+                // Game Over basically
+                AssignedGameState.Value = GameState.End;
+                ui_manager.SetUiState(AssignedGameState.Value);
+            }
+        }).AddTo(LifetimeDisposables);
+    }
     void SetUpChallenge(Challenge challenge)
     {
         assignedChallenge = challenge;
-        Debug.Log("Chosen Challenge: " + challenge);
     }
 
     void StartRound()
@@ -90,6 +85,7 @@ public class GameManager : MonoBehaviour
         StartCoroutine(EnemySpawnCoroutine());
     }
 
+    // Simple and quick restart, could have deleted prefab of level and instantiated again
     void RestartGame() => SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     
     IEnumerator EnemySpawnCoroutine()
